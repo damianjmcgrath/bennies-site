@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Delete Account – Bennies</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<main>
+  <nav>
+    <a href="index.html">Bennies</a>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Use</a>
+    <a href="delete-account.html">Delete Account</a>
+  </nav>
+
+  <h1>Delete your Bennies account</h1>
+  <p>This page provides the external account-deletion route for Bennies.</p>
+
+  <div class="card">
+    <h2>What deletion removes</h2>
+    <ul>
+      <li>Your Bennies authentication account and email address.</li>
+      <li>Your username and display name.</li>
+      <li>Friendships, requests, invitations and active multiplayer games.</li>
+      <li>Your own cloud Computer and Challenge statistics.</li>
+      <li>Account-linked block/report records.</li>
+    </ul>
+    <p>Completed multiplayer results may remain in another player's historical statistics, but your identity is anonymised so that your former username/display name is not retained in that result.</p>
+  </div>
+
+  <div class="card" id="delete-card">
+    <h2>Verify your account</h2>
+
+    <div id="verify">
+      <p>Enter the email address associated with the Bennies account you want to delete. We will send a secure sign-in link to that address. This works whether you normally sign in with email and password, Google, or Apple.</p>
+
+      <label for="email">Email address</label>
+      <input id="email" type="email" autocomplete="email">
+
+      <button class="primary" id="send-link">Send verification email</button>
+    </div>
+
+    <div id="status" class="notice" style="display:none;margin-top:16px"></div>
+
+    <div id="confirm" style="display:none">
+      <h2>Permanent deletion</h2>
+      <p id="verified-account"></p>
+      <p>This cannot be undone. Type <strong>DELETE</strong> below to enable permanent deletion.</p>
+      <label for="confirm-text">Confirmation</label>
+      <input id="confirm-text" type="text" autocomplete="off" placeholder="DELETE">
+      <button class="danger" id="delete" disabled>Delete Bennies Account</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Prefer to delete in the app?</h2>
+    <p>Open Bennies → Help &amp; Settings → Account → Delete Bennies Account.</p>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://dzkdqvwwmvpdjsbkzcfl.supabase.co";
+const SUPABASE_KEY = "sb_publishable_a28TLb7CQMrFU0_LNPgqmg_IuABtZ5y";
+const DELETE_REDIRECT_URL = "https://damianjmcgrath.github.io/bennies-site/delete-account.html";
+
+const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: {
+    persistSession: true,
+    detectSessionInUrl: true
+  }
+});
+
+const verifyBox = document.getElementById('verify');
+const email = document.getElementById('email');
+const sendLinkButton = document.getElementById('send-link');
+const statusBox = document.getElementById('status');
+const confirmBox = document.getElementById('confirm');
+const verifiedAccount = document.getElementById('verified-account');
+const confirmText = document.getElementById('confirm-text');
+const deleteButton = document.getElementById('delete');
+
+function showStatus(message, kind='notice') {
+  statusBox.style.display = 'block';
+  statusBox.className = kind;
+  statusBox.textContent = message;
+}
+
+function showVerifiedState(user) {
+  verifyBox.style.display = 'none';
+  confirmBox.style.display = 'block';
+
+  const accountEmail = user?.email ? `You are verified as ${user.email}.` : 'Your Bennies account has been verified.';
+  verifiedAccount.textContent = accountEmail;
+  showStatus('Account verified. Review the deletion information before continuing.', 'success');
+}
+
+async function checkExistingSession() {
+  const { data, error } = await client.auth.getUser();
+
+  if (!error && data?.user) {
+    showVerifiedState(data.user);
+  }
+}
+
+sendLinkButton.addEventListener('click', async () => {
+  const emailAddress = email.value.trim();
+
+  if (!emailAddress) {
+    showStatus('Enter the email address associated with your Bennies account.', 'error');
+    return;
+  }
+
+  sendLinkButton.disabled = true;
+  showStatus('Sending verification email…');
+
+  const { error } = await client.auth.signInWithOtp({
+    email: emailAddress,
+    options: {
+      shouldCreateUser: false,
+      emailRedirectTo: DELETE_REDIRECT_URL
+    }
+  });
+
+  sendLinkButton.disabled = false;
+
+  if (error) {
+    showStatus('Unable to send a verification email for that account. Check the address and try again.', 'error');
+    return;
+  }
+
+  showStatus('Verification email sent. Open the secure link in that email to return here and continue deleting your account.', 'success');
+});
+
+client.auth.onAuthStateChange((event, session) => {
+  if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session?.user) {
+    showVerifiedState(session.user);
+  }
+});
+
+confirmText.addEventListener('input', () => {
+  deleteButton.disabled = confirmText.value.trim().toUpperCase() !== 'DELETE';
+});
+
+deleteButton.addEventListener('click', async () => {
+  if (confirmText.value.trim().toUpperCase() !== 'DELETE') return;
+
+  deleteButton.disabled = true;
+  showStatus('Deleting your Bennies account…');
+
+  const result = await client.functions.invoke('delete-account', {
+    method: 'POST'
+  });
+
+  if (result.error) {
+    deleteButton.disabled = false;
+    showStatus('The account could not be deleted. Please try again.', 'error');
+    return;
+  }
+
+  try {
+    await client.auth.signOut({ scope: 'local' });
+  } catch (_) {}
+
+  confirmBox.style.display = 'none';
+  showStatus('Your Bennies account has been deleted.', 'success');
+});
+
+checkExistingSession();
+</script>
+
+  <footer>© 2026 Bennies. Developer contact details are available on the Apple App Store and Google Play listing.</footer>
+</main>
+</body>
+</html>
