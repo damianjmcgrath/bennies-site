@@ -1,0 +1,19 @@
+:root { color-scheme: dark; font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+body { margin:0; background:#071a2d; color:#f4f7fb; line-height:1.6; }
+main { max-width:850px; margin:0 auto; padding:32px 20px 64px; }
+nav { display:flex; gap:16px; flex-wrap:wrap; margin-bottom:28px; }
+a { color:#79d5a3; }
+.card { background:#102a43; border:1px solid #284862; border-radius:16px; padding:22px; margin:18px 0; }
+h1,h2 { line-height:1.2; }
+label { display:block; margin:12px 0 6px; font-weight:600; }
+input { width:100%; box-sizing:border-box; padding:12px; border-radius:10px; border:1px solid #55728a; background:#081d31; color:white; font-size:1rem; }
+button { margin-top:16px; padding:12px 18px; border:0; border-radius:10px; font-size:1rem; font-weight:700; cursor:pointer; }
+button.primary { background:#33a65c; color:white; }
+button.danger { background:#c0392b; color:white; }
+button:disabled { opacity:.55; cursor:not-allowed; }
+.notice { padding:14px; border-radius:10px; background:#183852; }
+.success { background:#123d2a; }
+.error { background:#4a1f24; }
+small { color:#c3d0dc; }
+ul { padding-left:22px; }
+footer { margin-top:36px; color:#bac8d4; font-size:.92rem; }
