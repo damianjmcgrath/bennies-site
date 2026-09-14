@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Countdown Timer</title>
+
+  <style>
+    :root {
+      --core-blue: #002d72;
+      --dark-blue: #00003d;
+      --dark-teal: #086778;
+      --teal: #0097a9;
+      --light-blue: #a2b2c8;
+      --amber: #f6b21b;
+      --mint: #71d9ca;
+      --slate: #425563;
+      --white: #ffffff;
+      --background: #f3f6f9;
+      --border: #d9e0e7;
+      --shadow: 0 18px 48px rgba(0, 45, 114, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      background:
+        linear-gradient(135deg, rgba(0, 151, 169, 0.08), transparent 35%),
+        var(--background);
+      color: var(--dark-blue);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    button:disabled,
+    input:disabled,
+    select:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+    }
+
+    .top-bar {
+      height: 12px;
+      background: linear-gradient(
+        90deg,
+        var(--core-blue) 0 28%,
+        var(--dark-teal) 28% 52%,
+        var(--teal) 52% 76%,
+        var(--amber) 76% 100%
+      );
+    }
+
+    .page {
+      width: min(1500px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 48px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 22px;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--core-blue);
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+    }
+
+    .status {
+      border: 1px solid var(--light-blue);
+      border-radius: 999px;
+      padding: 8px 14px;
+      background: var(--white);
+      color: var(--slate);
+      font-weight: 700;
+    }
+
+    .status.running {
+      border-color: var(--mint);
+      background: rgba(113, 217, 202, 0.18);
+      color: var(--dark-teal);
+    }
+
+    .status.paused {
+      border-color: var(--amber);
+      background: rgba(246, 178, 27, 0.16);
+      color: #755000;
+    }
+
+    .status.finished {
+      border-color: var(--amber);
+      background: var(--amber);
+      color: var(--dark-blue);
+    }
+
+    .timer-panel {
+      position: relative;
+      overflow: hidden;
+      border-radius: 28px;
+      padding: clamp(28px, 5vw, 72px) 20px;
+      background: linear-gradient(145deg, var(--dark-blue), var(--core-blue));
+      box-shadow: var(--shadow);
+      color: var(--white);
+      text-align: center;
+    }
+
+    .timer-panel::after {
+      position: absolute;
+      right: -120px;
+      bottom: -190px;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      background: rgba(0, 151, 169, 0.22);
+      content: "";
+      pointer-events: none;
+    }
+
+    .timer {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .time-part {
+      width: 27%;
+      min-width: 0;
+    }
+
+    .digits,
+    .separator {
+      font-size: clamp(4.5rem, 15vw, 14rem);
+      font-weight: 800;
+      line-height: 0.88;
+      letter-spacing: -0.07em;
+      text-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .separator {
+      width: 8%;
+      color: var(--mint);
+      letter-spacing: 0;
+    }
+
+    .time-label {
+      display: block;
+      margin-top: 18px;
+      color: var(--light-blue);
+      font-size: clamp(0.8rem, 1.6vw, 1.1rem);
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .timer-panel.warning {
+      animation: warning-pulse 0.8s ease;
+    }
+
+    .timer-panel.finished {
+      background: linear-gradient(145deg, #765000, var(--amber));
+      color: var(--dark-blue);
+      animation: finish-pulse 0.85s ease 2;
+    }
+
+    @keyframes warning-pulse {
+      50% {
+        box-shadow: 0 0 0 10px rgba(246, 178, 27, 0.32);
+      }
+    }
+
+    @keyframes finish-pulse {
+      50% {
+        transform: scale(1.008);
+        box-shadow: 0 0 0 12px rgba(246, 178, 27, 0.3);
+      }
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin: 22px 0 30px;
+    }
+
+    .button {
+      min-height: 50px;
+      border: 2px solid transparent;
+      border-radius: 12px;
+      padding: 12px 22px;
+      font-weight: 700;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .button:not(:disabled):hover {
+      transform: translateY(-1px);
+      box-shadow: 0 7px 18px rgba(0, 45, 114, 0.15);
+    }
+
+    .button-primary {
+      background: var(--teal);
+      color: var(--white);
+    }
+
+    .button-secondary {
+      background: var(--core-blue);
+      color: var(--white);
+    }
+
+    .button-outline {
+      border-color: var(--core-blue);
+      background: var(--white);
+      color: var(--core-blue);
+    }
+
+    .button-reset {
+      border-color: var(--slate);
+      background: transparent;
+      color: var(--slate);
+    }
+
+    .setup-grid {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.85fr) minmax(440px, 1.4fr);
+      gap: 22px;
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      background: var(--white);
+      box-shadow: 0 10px 28px rgba(66, 85, 99, 0.07);
+    }
+
+    .card h2 {
+      margin: 0 0 8px;
+      color: var(--core-blue);
+      font-size: 1.35rem;
+    }
+
+    .card-introduction {
+      margin: 0 0 22px;
+      color: var(--slate);
+      line-height: 1.5;
+    }
+
+    .duration-inputs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    label {
+      display: block;
+      color: var(--slate);
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    input[type="number"],
+    select {
+      width: 100%;
+      min-height: 50px;
+      margin-top: 7px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      background: var(--white);
+      color: var(--dark-blue);
+      padding: 10px 12px;
+    }
+
+    input[type="number"]:focus,
+    select:focus,
+    button:focus-visible {
+      outline: 3px solid rgba(0, 151, 169, 0.25);
+      outline-offset: 2px;
+      border-color: var(--teal);
+    }
+
+    .warning-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .warning-row {
+      display: grid;
+      grid-template-columns: auto 1fr 1fr;
+      align-items: end;
+      gap: 12px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      background: #f8fafc;
+    }
+
+    .warning-toggle {
+      display: flex;
+      align-items: center;
+      align-self: center;
+      gap: 9px;
+      padding-right: 5px;
+      color: var(--dark-blue);
+      white-space: nowrap;
+    }
+
+    .warning-toggle input {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--teal);
+    }
+
+    .error {
+      display: none;
+      margin: 0 0 20px;
+      border-left: 5px solid var(--amber);
+      border-radius: 8px;
+      padding: 13px 16px;
+      background: rgba(246, 178, 27, 0.17);
+      color: var(--dark-blue);
+      font-weight: 700;
+    }
+
+    .error.visible {
+      display: block;
+    }
+
+    dialog {
+      width: min(440px, calc(100% - 32px));
+      border: 0;
+      border-radius: 18px;
+      padding: 0;
+      box-shadow: 0 25px 70px rgba(0, 0, 61, 0.3);
+    }
+
+    dialog::backdrop {
+      background: rgba(0, 0, 61, 0.64);
+    }
+
+    .dialog-content {
+      padding: 26px;
+    }
+
+    .dialog-content h2 {
+      margin: 0 0 10px;
+      color: var(--core-blue);
+    }
+
+    .dialog-content p {
+      margin: 0 0 22px;
+      color: var(--slate);
+      line-height: 1.5;
+    }
+
+    .dialog-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    @media (max-width: 850px) {
+      .setup-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 580px) {
+      .page {
+        width: min(100% - 20px, 1500px);
+        padding-top: 18px;
+      }
+
+      header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .timer-panel {
+        border-radius: 20px;
+        padding-inline: 8px;
+      }
+
+      .digits,
+      .separator {
+        font-size: clamp(3.6rem, 18vw, 7rem);
+      }
+
+      .time-label {
+        margin-top: 12px;
+        font-size: 0.7rem;
+      }
+
+      .controls {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .button {
+        padding-inline: 10px;
+      }
+
+      .card {
+        padding: 18px;
+      }
+
+      .warning-row {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .warning-toggle {
+        grid-column: 1 / -1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="top-bar"></div>
+
+  <main class="page">
+    <header>
+      <h1>Countdown Timer</h1>
+      <div id="status" class="status" aria-live="polite">Ready</div>
+    </header>
+
+    <div id="errorMessage" class="error" role="alert"></div>
+
+    <section id="timerPanel" class="timer-panel" aria-label="Countdown clock">
+      <div class="timer">
+        <div class="time-part">
+          <span id="hoursDisplay" class="digits">00</span>
+          <span class="time-label">Hours</span>
+        </div>
+
+        <span class="separator" aria-hidden="true">:</span>
+
+        <div class="time-part">
+          <span id="minutesDisplay" class="digits">00</span>
+          <span class="time-label">Minutes</span>
+        </div>
+
+        <span class="separator" aria-hidden="true">:</span>
+
+        <div class="time-part">
+          <span id="secondsDisplay" class="digits">00</span>
+          <span class="time-label">Seconds</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="controls">
+      <button id="startButton" class="button button-primary" type="button">
+        Start Countdown
+      </button>
+
+      <button id="pauseButton" class="button button-secondary" type="button" disabled>
+        Pause
+      </button>
+
+      <button id="restartButton" class="button button-outline" type="button" disabled>
+        Restart
+      </button>
+
+      <button id="resetButton" class="button button-reset" type="button">
+        Reset Clock
+      </button>
+    </div>
+
+    <div class="setup-grid">
+      <section class="card">
+        <h2>Countdown duration</h2>
+        <p class="card-introduction">
+          Enter the exact amount of time for the countdown.
+        </p>
+
+        <div class="duration-inputs">
+          <label>
+            Hours
+            <input id="hoursInput" type="number" min="0" max="999" value="0">
+          </label>
+
+          <label>
+            Minutes
+            <input id="minutesInput" type="number" min="0" max="59" value="10">
+          </label>
+
+          <label>
+            Seconds
+            <input id="secondsInput" type="number" min="0" max="59" value="0">
+          </label>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Warning times</h2>
+        <p class="card-introduction">
+          Enable up to three alerts before the countdown finishes.
+        </p>
+
+        <div class="warning-list">
+          <div class="warning-row">
+            <label class="warning-toggle">
+              <input class="warning-enabled" type="checkbox" checked>
+              Warning 1
+            </label>
+
+            <label>
+              Time before the end
+              <input class="warning-value" type="number" min="1" value="5">
+            </label>
+
+            <label>
+              Unit
+              <select class="warning-unit">
+                <option value="hours">Hours</option>
+                <option value="minutes" selected>Minutes</option>
+                <option value="seconds">Seconds</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="warning-row">
+            <label class="warning-toggle">
+              <input class="warning-enabled" type="checkbox">
+              Warning 2
+            </label>
+
+            <label>
+              Time before the end
+              <input class="warning-value" type="number" min="1" value="2">
+            </label>
+
+            <label>
+              Unit
+              <select class="warning-unit">
+                <option value="hours">Hours</option>
+                <option value="minutes" selected>Minutes</option>
+                <option value="seconds">Seconds</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="warning-row">
+            <label class="warning-toggle">
+              <input class="warning-enabled" type="checkbox">
+              Warning 3
+            </label>
+
+            <label>
+              Time before the end
+              <input class="warning-value" type="number" min="1" value="30">
+            </label>
+
+            <label>
+              Unit
+              <select class="warning-unit">
+                <option value="hours">Hours</option>
+                <option value="minutes">Minutes</option>
+                <option value="seconds" selected>Seconds</option>
+              </select>
+            </label>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <dialog id="restartDialog">
+    <div class="dialog-content">
+      <h2>Restart the countdown?</h2>
+      <p>
+        The clock will return to its original duration and begin counting
+        down again. Your warning settings will be retained.
+      </p>
+
+      <div class="dialog-actions">
+        <button
+          id="cancelRestartButton"
+          class="button button-outline"
+          type="button"
+        >
+          Cancel
+        </button>
+
+        <button
+          id="confirmRestartButton"
+          class="button button-secondary"
+          type="button"
+        >
+          Restart Countdown
+        </button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="resetDialog">
+    <div class="dialog-content">
+      <h2>Reset the clock?</h2>
+      <p>
+        This will stop the countdown and clear the current clock settings.
+      </p>
+
+      <div class="dialog-actions">
+        <button
+          id="cancelResetButton"
+          class="button button-outline"
+          type="button"
+        >
+          Cancel
+        </button>
+
+        <button
+          id="confirmResetButton"
+          class="button button-secondary"
+          type="button"
+        >
+          Reset Clock
+        </button>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    const hoursDisplay = document.getElementById("hoursDisplay");
+    const minutesDisplay = document.getElementById("minutesDisplay");
+    const secondsDisplay = document.getElementById("secondsDisplay");
+
+    const hoursInput = document.getElementById("hoursInput");
+    const minutesInput = document.getElementById("minutesInput");
+    const secondsInput = document.getElementById("secondsInput");
+
+    const startButton = document.getElementById("startButton");
+    const pauseButton = document.getElementById("pauseButton");
+    const restartButton = document.getElementById("restartButton");
+    const resetButton = document.getElementById("resetButton");
+
+    const statusElement = document.getElementById("status");
+    const timerPanel = document.getElementById("timerPanel");
+    const errorMessage = document.getElementById("errorMessage");
+
+    const warningRows = [...document.querySelectorAll(".warning-row")];
+
+    let timerInterval = null;
+    let endTimestamp = 0;
+    let initialDurationMs = 0;
+    let remainingMs = 0;
+    let previousRemainingMs = 0;
+    let configuredWarnings = [];
+    let triggeredWarnings = new Set();
+    let timerState = "ready";
+    let audioContext = null;
+let audioUnlocked = false;
+
+const warningAudio = new Audio(
+  "mixkit-clear-announce-tones-2861.wav"
+);
+
+const finishedAudio = new Audio(
+  "mixkit-happy-bells-notification-937.wav"
+);
+
+warningAudio.preload = "auto";
+finishedAudio.preload = "auto";
+
+
+
+const restartDialog = document.getElementById("restartDialog");
+const cancelRestartButton =
+  document.getElementById("cancelRestartButton");
+const confirmRestartButton =
+  document.getElementById("confirmRestartButton");
+
+const resetDialog = document.getElementById("resetDialog");
+const cancelResetButton =
+  document.getElementById("cancelResetButton");
+const confirmResetButton =
+  document.getElementById("confirmResetButton");
+
+
+    function normaliseNumber(value, maximum = Infinity) {
+      const number = Math.floor(Number(value));
+      return Number.isFinite(number)
+        ? Math.max(0, Math.min(number, maximum))
+        : 0;
+    }
+
+    function getDurationFromInputs() {
+      const hours = normaliseNumber(hoursInput.value, 999);
+      const minutes = normaliseNumber(minutesInput.value, 59);
+      const seconds = normaliseNumber(secondsInput.value, 59);
+
+      hoursInput.value = hours;
+      minutesInput.value = minutes;
+      secondsInput.value = seconds;
+
+      return ((hours * 3600) + (minutes * 60) + seconds) * 1000;
+    }
+
+    function getWarningMilliseconds(value, unit) {
+      const multipliers = {
+        hours: 3600000,
+        minutes: 60000,
+        seconds: 1000
+      };
+
+      return value * multipliers[unit];
+    }
+
+    function readWarnings(durationMs) {
+      const warnings = [];
+
+      for (let index = 0; index < warningRows.length; index++) {
+        const row = warningRows[index];
+        const enabled = row.querySelector(".warning-enabled").checked;
+
+        if (!enabled) {
+          continue;
+        }
+
+        const valueInput = row.querySelector(".warning-value");
+        const unitInput = row.querySelector(".warning-unit");
+        const value = normaliseNumber(valueInput.value);
+
+        valueInput.value = value;
+
+        if (value < 1) {
+          throw new Error(`Warning ${index + 1} must be at least 1.`);
+        }
+
+        const thresholdMs = getWarningMilliseconds(value, unitInput.value);
+
+        if (thresholdMs >= durationMs) {
+          throw new Error(
+            `Warning ${index + 1} must occur after the countdown has started.`
+          );
+        }
+
+        if (warnings.some(warning => warning.thresholdMs === thresholdMs)) {
+          throw new Error("Two warnings cannot be set for exactly the same time.");
+        }
+
+        warnings.push({
+          id: index,
+          thresholdMs
+        });
+      }
+
+      return warnings.sort((a, b) => b.thresholdMs - a.thresholdMs);
+    }
+
+    function formatTime(milliseconds) {
+      const totalSeconds = Math.max(0, Math.ceil(milliseconds / 1000));
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+
+      return {
+        hours: String(hours).padStart(2, "0"),
+        minutes: String(minutes).padStart(2, "0"),
+        seconds: String(seconds).padStart(2, "0")
+      };
+    }
+
+    function updateDisplay(milliseconds) {
+      const time = formatTime(milliseconds);
+      hoursDisplay.textContent = time.hours;
+      minutesDisplay.textContent = time.minutes;
+      secondsDisplay.textContent = time.seconds;
+      document.title = `${time.hours}:${time.minutes}:${time.seconds} – Countdown`;
+    }
+
+    function setStatus(text, stateClass = "") {
+      statusElement.textContent = text;
+      statusElement.className = "status";
+
+      if (stateClass) {
+        statusElement.classList.add(stateClass);
+      }
+    }
+
+    function showError(message) {
+      errorMessage.textContent = message;
+      errorMessage.classList.add("visible");
+      errorMessage.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    function clearError() {
+      errorMessage.textContent = "";
+      errorMessage.classList.remove("visible");
+    }
+
+    function setConfigurationDisabled(disabled) {
+      document
+        .querySelectorAll(".card input, .card select")
+        .forEach(control => control.disabled = disabled);
+    }
+
+async function ensureAudioReady() {
+  if (!audioContext) {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  }
+
+  if (audioContext.state !== "running") {
+    await audioContext.resume();
+  }
+
+  // Play an inaudible tone to fully initialise browser audio.
+  // This prevents the first real warning from being missed.
+  if (!audioUnlocked) {
+    const oscillator = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+
+    gain.gain.setValueAtTime(0.0001, audioContext.currentTime);
+
+    oscillator.connect(gain);
+    gain.connect(audioContext.destination);
+
+    oscillator.start();
+    oscillator.stop(audioContext.currentTime + 0.02);
+
+    audioUnlocked = true;
+  }
+}
+
+function playTone(frequency, startDelay, duration, volume = 0.18) {
+  const scheduleTone = () => {
+    const oscillator = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+    const startTime = audioContext.currentTime + startDelay;
+
+    oscillator.type = "sine";
+    oscillator.frequency.setValueAtTime(frequency, startTime);
+
+    gain.gain.setValueAtTime(0.0001, startTime);
+    gain.gain.exponentialRampToValueAtTime(
+      volume,
+      startTime + 0.025
+    );
+    gain.gain.exponentialRampToValueAtTime(
+      0.0001,
+      startTime + duration
+    );
+
+    oscillator.connect(gain);
+    gain.connect(audioContext.destination);
+
+    oscillator.start(startTime);
+    oscillator.stop(startTime + duration + 0.05);
+  };
+
+  if (!audioContext || audioContext.state !== "running") {
+    ensureAudioReady()
+      .then(scheduleTone)
+      .catch(error => console.error("Unable to play sound:", error));
+  } else {
+    scheduleTone();
+  }
+}
+
+function playAudioFile(audio, fallbackSound) {
+  audio.pause();
+  audio.currentTime = 0;
+  audio.volume = 0.85;
+
+  const playAttempt = audio.play();
+
+  if (playAttempt !== undefined) {
+    playAttempt.catch(error => {
+      console.warn("Audio file could not be played:", error);
+      fallbackSound();
+    });
+  }
+}
+
+function playWarningSound() {
+  playAudioFile(warningAudio, () => {
+    playTone(880, 0, 0.22);
+    playTone(1174.66, 0.25, 0.35);
+  });
+}
+
+function playFinishedSound() {
+  playAudioFile(finishedAudio, () => {
+    playTone(659.25, 0, 0.3, 0.22);
+    playTone(783.99, 0.34, 0.3, 0.22);
+    playTone(1046.5, 0.68, 0.85, 0.25);
+  });
+}
+
+    function animateWarning() {
+      timerPanel.classList.remove("warning");
+      void timerPanel.offsetWidth;
+      timerPanel.classList.add("warning");
+
+      window.setTimeout(() => {
+        timerPanel.classList.remove("warning");
+      }, 900);
+    }
+
+    function tick() {
+      remainingMs = Math.max(0, endTimestamp - Date.now());
+
+      configuredWarnings.forEach(warning => {
+        const crossedThreshold =
+          previousRemainingMs > warning.thresholdMs &&
+          remainingMs <= warning.thresholdMs;
+
+        if (crossedThreshold && !triggeredWarnings.has(warning.id)) {
+          triggeredWarnings.add(warning.id);
+          playWarningSound();
+          animateWarning();
+          setStatus("Warning reached", "running");
+        }
+      });
+
+      updateDisplay(remainingMs);
+      previousRemainingMs = remainingMs;
+
+      if (remainingMs <= 0) {
+        finishCountdown();
+      }
+    }
+
+    function beginRunning() {
+      clearInterval(timerInterval);
+
+      timerState = "running";
+      endTimestamp = Date.now() + remainingMs;
+      previousRemainingMs = remainingMs;
+
+      setStatus("Countdown running", "running");
+      timerPanel.classList.remove("finished");
+      startButton.disabled = true;
+      pauseButton.disabled = false;
+      restartButton.disabled = false;
+      pauseButton.textContent = "Pause";
+      setConfigurationDisabled(true);
+
+      tick();
+      timerInterval = window.setInterval(tick, 200);
+    }
+
+async function startCountdown() {
+  clearError();
+
+  try {
+    await ensureAudioReady();
+warningAudio.load();
+finishedAudio.load();
+
+        const durationMs = getDurationFromInputs();
+
+        if (durationMs <= 0) {
+          throw new Error("Enter a countdown duration greater than zero.");
+        }
+
+        configuredWarnings = readWarnings(durationMs);
+        initialDurationMs = durationMs;
+        remainingMs = durationMs;
+        triggeredWarnings.clear();
+
+        beginRunning();
+      } catch (error) {
+        showError(error.message);
+      }
+    }
+
+    function pauseOrResumeCountdown() {
+      if (timerState === "running") {
+        remainingMs = Math.max(0, endTimestamp - Date.now());
+        clearInterval(timerInterval);
+        timerInterval = null;
+        timerState = "paused";
+
+        updateDisplay(remainingMs);
+        setStatus("Countdown paused", "paused");
+        pauseButton.textContent = "Resume";
+        return;
+      }
+
+      if (timerState === "paused") {
+        beginRunning();
+      }
+    }
+
+function openRestartDialog() {
+  if (typeof restartDialog.showModal === "function") {
+    restartDialog.showModal();
+  } else if (
+    window.confirm(
+      "Restart the countdown from its original duration?"
+    )
+  ) {
+    restartCountdown();
+  }
+}
+
+function openResetDialog() {
+  if (typeof resetDialog.showModal === "function") {
+    resetDialog.showModal();
+  } else if (
+    window.confirm("Reset the clock and clear its settings?")
+  ) {
+    resetClock();
+  }
+}
+
+
+    function restartCountdown() {
+
+if (restartDialog.open) {
+  restartDialog.close();
+}
+
+      if (initialDurationMs <= 0) {
+        return;
+      }
+
+      clearError();
+      clearInterval(timerInterval);
+      triggeredWarnings.clear();
+      remainingMs = initialDurationMs;
+
+      beginRunning();
+    }
+
+    function finishCountdown() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      timerState = "finished";
+      remainingMs = 0;
+
+      updateDisplay(0);
+      playFinishedSound();
+
+      setStatus("Time expired", "finished");
+      timerPanel.classList.add("finished");
+      startButton.disabled = false;
+      pauseButton.disabled = true;
+      pauseButton.textContent = "Pause";
+      restartButton.disabled = false;
+      setConfigurationDisabled(false);
+    }
+
+    function openResetDialog() {
+      if (typeof resetDialog.showModal === "function") {
+        resetDialog.showModal();
+      } else if (window.confirm("Reset the clock and clear its settings?")) {
+        resetClock();
+      }
+    }
+
+    function resetClock() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+
+      timerState = "ready";
+      endTimestamp = 0;
+      initialDurationMs = 0;
+      remainingMs = 0;
+      previousRemainingMs = 0;
+      configuredWarnings = [];
+      triggeredWarnings.clear();
+
+      hoursInput.value = 0;
+      minutesInput.value = 0;
+      secondsInput.value = 0;
+
+      warningRows.forEach(row => {
+        row.querySelector(".warning-enabled").checked = false;
+      });
+
+      updateDisplay(0);
+      clearError();
+      setStatus("Ready");
+      timerPanel.classList.remove("warning", "finished");
+      startButton.disabled = false;
+      pauseButton.disabled = true;
+      pauseButton.textContent = "Pause";
+      restartButton.disabled = true;
+      setConfigurationDisabled(false);
+
+      if (resetDialog.open) {
+        resetDialog.close();
+      }
+    }
+
+startButton.addEventListener("click", startCountdown);
+pauseButton.addEventListener("click", pauseOrResumeCountdown);
+restartButton.addEventListener("click", openRestartDialog);
+resetButton.addEventListener("click", openResetDialog);
+
+cancelRestartButton.addEventListener("click", () => {
+  restartDialog.close();
+});
+
+confirmRestartButton.addEventListener("click", () => {
+  restartDialog.close();
+  restartCountdown();
+});
+
+cancelResetButton.addEventListener("click", () => {
+  resetDialog.close();
+});
+
+confirmResetButton.addEventListener("click", resetClock);
+
+restartDialog.addEventListener("click", event => {
+  if (event.target === restartDialog) {
+    restartDialog.close();
+  }
+});
+
+resetDialog.addEventListener("click", event => {
+  if (event.target === resetDialog) {
+    resetDialog.close();
+  }
+});
+
+updateDisplay(0);
+  </script>
+</body>
+</html>
