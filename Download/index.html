@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#071b2d">
+  <meta name="description" content="Download Bennies, the card game for playing against the computer or friends. Currently in closed testing.">
+  <title>Download Bennies | Bennies Card Game</title>
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; background: radial-gradient(circle at 50% -10%, #173a49, #0d2538 48%, #071929); color: #f6f7f4; }
+    .container { max-width: 920px; margin: 0 auto; padding: 26px 24px 70px; }
+    nav { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+    nav a { color: #d3dfde; text-decoration: none; font-size: 15px; }
+    nav a:hover, nav a:focus-visible { text-decoration: underline; }
+    .brand { display: inline-flex; align-items: center; gap: 13px; color: white; text-decoration: none; font-weight: 750; font-size: 20px; }
+    .mark { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 12px; background: #0c3423; border: 2px solid #e5bf63; color: #f2cb6d; font: 700 31px Georgia, serif; box-shadow: 0 4px 16px #0006; }
+    main { margin: 90px auto 0; text-align: center; }
+    .eyebrow { display: inline-flex; padding: 8px 17px; border: 1px solid #4c725f; border-radius: 999px; background: #17362c; color: #b4e0b4; font-size: 14px; font-weight: 650; }
+    h1 { font-size: clamp(42px, 8vw, 68px); line-height: 1.05; letter-spacing: -.04em; margin: 24px 0 14px; }
+    .lead { font-size: clamp(18px, 3vw, 22px); line-height: 1.6; max-width: 690px; margin: 0 auto; color: #d9e4e8; }
+    .panel { max-width: 730px; padding: clamp(24px, 5vw, 46px); margin: 40px auto 0; background: #122f2d; border: 1px solid #57725f; border-radius: 24px; box-shadow: 0 28px 70px #0006; }
+    .panel-icon { font-size: 42px; }
+    .panel h2 { font-size: 27px; margin: 12px 0; }
+    .panel p { font-size: 18px; line-height: 1.65; color: #e3e9e1; margin: 0 auto; max-width: 570px; }
+    .note { margin-top: 24px !important; font-size: 15px !important; color: #b8c9c5 !important; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 50px; margin-top: 27px; padding: 12px 26px; border-radius: 999px; background: #a9d89d; color: #102f22; text-decoration: none; font-weight: 750; }
+    .btn:hover, .btn:focus-visible { background: #c6ebb9; }
+    footer { color: #aec2cb; text-align: center; margin-top: 70px; font-size: 14px; }
+    footer a { color: #cae0dc; }
+    /* Future public release: replace the notice panel with real store links.
+       Do not publish placeholder store destinations. */
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav aria-label="Site navigation">
+      <a class="brand" href="/"><span class="mark" aria-hidden="true">B</span><span>Bennies</span></a>
+      <a href="/">Home</a>
+    </nav>
+    <main>
+      <span class="eyebrow">Coming soon</span>
+      <h1>Download Bennies</h1>
+      <p class="lead">Play the card game against the computer, or challenge your friends to a match.</p>
+      <section class="panel" aria-labelledby="availability-title">
+        <div class="panel-icon" aria-hidden="true">🃏</div>
+        <h2 id="availability-title">We're currently testing!</h2>
+        <p>This app is currently in a testing period and is not available for general download. It should be available in a few weeks.</p>
+        <p class="note">Already participating in the closed test? Please use the testing invitation you received to install Bennies.</p>
+        <a class="btn" href="/">Back to Bennies home</a>
+      </section>
+    </main>
+    <footer>© Bennies Card Game · <a href="mailto:damianjmcgrath@gmail.com">Questions or feedback?</a></footer>
+  </div>
+</body>
+</html>
