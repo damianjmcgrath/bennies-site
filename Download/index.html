@@ -1,4 +1,93 @@
 <!doctype html>
 <html lang="en-GB">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#071b2d"><meta name="description" content="Bennies is currently in closed testing. Find out when the card game will be available on Google Play and the Apple App Store."><meta property="og:title" content="Download Bennies | Coming Soon"><meta property="og:description" content="Bennies is currently in closed testing. Find out when the card game will be available on Google Play and the Apple App Store."><meta property="og:image" content="https://benniescardgame.co.uk/assets/bennies-icon.jpg"><link rel="icon" href="../assets/bennies-icon.jpg"><link rel="stylesheet" href="../styles.css"><title>Download Bennies | Coming Soon</title></head>
-<body><header class="site-header"><div class="shell nav-inner"><a class="brand" href="/" aria-label="Bennies home"><img src="../assets/bennies-icon.jpg" alt="" width="42" height="42"><span>Bennies</span></a><nav class="main-nav" aria-label="Main navigation"><a class="" href="/">Home</a><a class="active" href="/Download/">Download</a><a class="" href="/privacy.html">Privacy Policy</a><a class="" href="/terms.html">Terms of Use</a><a class="" href="/delete-account.html">Delete Account</a></nav></div></header><main id="main-content"><section class="shell download-hero"><div class="download-copy"><div class="eyebrow"><span class="dot"></span> GET READY TO PLAY</div><h1>Your next game<br><em>is nearly here.</em></h1><p>Play cards, make clever sets and challenge friends. Bennies is making its way to Android and iPhone.</p><div class="testing-panel"><div class="test-icon">✦</div><div><span class="small-label">CURRENT STATUS</span><h2>We're in closed testing</h2><p>This app is currently in a testing period and is not available for general download. It should be available in a few weeks.</p><p class="muted">Already invited to test? Please use your existing Google Play testing invitation or Apple TestFlight invitation.</p></div></div><div class="download-actions"><a class="button button-primary" href="/">Explore Bennies <span aria-hidden="true">↗</span></a><a class="button button-ghost" href="mailto:damianjmcgrath@gmail.com?subject=Bennies%20download%20enquiry">Contact us</a></div></div><div class="download-visual"><img class="download-brand" src="/assets/bennies-logo.png" alt="May's Bennies logo"><div class="phone download-phone"><img src="/assets/home-screen.webp" alt="Bennies home screen on a mobile phone"></div></div></section><section class="shell download-next"><div class="section-label">AFTER LAUNCH</div><h2>One link. Two stores.</h2><p>When Bennies becomes publicly available, you'll be able to choose Google Play or the Apple App Store from this page. The link your friend shared with you will continue to work.</p><div class="store-previews" aria-label="Future store availability"><div><span aria-hidden="true">▶</span> Google Play <small>Coming soon</small></div><div><span aria-hidden="true">●</span> App Store <small>Coming soon</small></div></div></section></main><footer class="site-footer"><div class="shell footer-inner"><div><div class="footer-brand"><img src="../assets/bennies-icon.jpg" alt="" width="36" height="36"><span>Bennies</span></div><p>A little competition. A lot of cards.</p></div><div class="footer-links"><a href="/Download/">Download</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/delete-account.html">Delete account</a><a href="mailto:damianjmcgrath@gmail.com">Contact</a></div><small>© 2026 Bennies Card Game</small></div></footer></body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#071b2d">
+  <meta name="description" content="Download Bennies free on the Apple App Store. No ads, no subscriptions and no in-app purchases. Google Play is coming soon.">
+  <meta property="og:title" content="Download Bennies | Free Card Game, No Ads">
+  <meta property="og:description" content="Bennies is free to play with no adverts. Download on the Apple App Store today; Google Play is coming soon.">
+  <meta property="og:image" content="https://benniescardgame.co.uk/assets/bennies-icon.jpg">
+  <link rel="icon" href="../assets/bennies-icon.jpg">
+  <link rel="stylesheet" href="../styles.css">
+  <title>Download Bennies | Free to Play, No Ads</title>
+  <style>
+    /* Page-specific styles; no changes to the site's shared CSS are required. */
+    .availability-panel{margin-top:32px;padding:25px 27px;background:linear-gradient(115deg,#143e35,#102d3c);border:1px solid rgba(183,229,176,.38);border-radius:20px}
+    .availability-panel h2{font:600 25px Georgia,serif;margin:8px 0 10px}
+    .availability-panel p{color:#c9dbdc;margin:0;font-size:14px;line-height:1.7}
+    .store-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:27px}
+    .store-choice{display:flex;flex-direction:column;align-items:flex-start;gap:12px;text-decoration:none;border:1px solid rgba(210,234,229,.22);background:#0c2935;border-radius:18px;padding:23px;min-height:215px;color:#f6f5ec;transition:border-color .2s,transform .2s}
+    a.store-choice:hover{transform:translateY(-3px);border-color:#b7e5b0;color:#fff}
+    .store-choice.is-live{border-color:rgba(183,229,176,.55);background:linear-gradient(145deg,#164333,#0d302f)}
+    .store-choice.is-pending{opacity:.85}
+    .store-choice svg{width:37px;height:37px;flex:none}
+    .store-choice h3{font-size:20px;letter-spacing:-.025em;margin:0}
+    .store-choice p{font-size:13px;color:#bfd0d1;margin:0;line-height:1.55}
+    .store-tag{font-size:11px;letter-spacing:.08em;font-weight:800;text-transform:uppercase;color:#b7e5b0}
+    .store-tag.pending{color:#dfbb69}
+    .store-action{display:inline-flex;gap:8px;align-items:center;margin-top:auto;color:#b7e5b0;font-size:14px;font-weight:800}
+    .store-choice.is-pending .store-action{color:#d4c394}
+    .download-hero .download-copy>p{max-width:590px}
+    .download-note{color:#9fb7be;font-size:13px;margin-top:19px;line-height:1.7}
+    .download-next .store-previews{margin-bottom:18px}
+    @media(max-width:700px){.store-choice-grid{grid-template-columns:1fr}.store-choice{min-height:170px}.download-hero{padding-top:55px}.availability-panel{padding:21px}}
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <div class="shell nav-inner">
+    <a class="brand" href="/" aria-label="Bennies home"><img src="../assets/bennies-icon.jpg" alt="" width="42" height="42"><span>Bennies</span></a>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a href="/">Home</a>
+      <a class="active" href="/Download/" aria-current="page">Download</a>
+      <a href="/privacy.html">Privacy Policy</a>
+      <a href="/terms.html">Terms of Use</a>
+      <a href="/delete-account.html">Delete Account</a>
+    </nav>
+  </div>
+</header>
+<main id="main-content">
+  <section class="shell download-hero">
+    <div class="download-copy">
+      <div class="eyebrow"><span class="dot"></span> BENNIES IS ON THE APP STORE</div>
+      <h1>Your next game<br><em>starts here.</em></h1>
+      <p>Play a little strategy, a little luck and plenty of Bennies. Challenge the computer or play with friends — wherever they are.</p>
+      <div class="availability-panel">
+        <span class="small-label">JUST CARDS. NO CATCH.</span>
+        <h2>100% free to play. No ads.</h2>
+        <p>No in-app purchases. No subscriptions. Just a card game you can enjoy at your own pace.</p>
+      </div>
+      <div class="store-choice-grid" aria-label="Download Bennies">
+        <a class="store-choice is-live" href="https://apps.apple.com/app/id6791396352" target="_blank" rel="noopener noreferrer" aria-label="Download Bennies free on the Apple App Store (opens in a new tab)">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.05 12.54c.03 3.04 2.67 4.04 2.7 4.05-.02.07-.42 1.47-1.39 2.92-.84 1.26-1.71 2.5-3.08 2.53-1.35.03-1.79-.82-3.34-.82s-2.04.79-3.32.85c-1.33.05-2.35-1.35-3.2-2.6-1.74-2.54-3.07-7.16-1.28-10.28a4.98 4.98 0 0 1 4.18-2.55c1.31-.03 2.55.91 3.35.91.79 0 2.27-1.12 3.83-.95.65.03 2.49.26 3.67 1.98-.1.06-2.19 1.27-2.17 3.96ZM14.58 5.01A4.94 4.94 0 0 0 15.7 1.4a5.05 5.05 0 0 0-3.27 1.72 4.7 4.7 0 0 0-1.18 3.48c1.23.09 2.48-.62 3.33-1.59Z"/></svg>
+          <span class="store-tag">Available now</span>
+          <h3>Apple App Store</h3>
+          <p>Get Bennies free for your iPhone or compatible iPad.</p>
+          <span class="store-action">Download for Apple <span aria-hidden="true">↗</span></span>
+        </a>
+        <div class="store-choice is-pending" aria-label="Google Play, coming soon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M4 2.8v18.4L20.8 12 4 2.8Z"/><path d="M4 2.8 13 12 4 21.2M13 12l7.8 0"/></svg>
+          <span class="store-tag pending">Under review</span>
+          <h3>Google Play</h3>
+          <p>The Android release is awaiting approval. Check back here for the download link.</p>
+          <span class="store-action">Coming soon</span>
+        </div>
+      </div>
+      <p class="download-note">Already invited to the Android closed test? Continue to use your existing Google Play tester invitation until the public release is available.</p>
+      <div class="download-actions"><a class="button button-ghost" href="mailto:damianjmcgrath@gmail.com?subject=Bennies%20support%20or%20feedback">Questions or feedback? Contact us</a></div>
+    </div>
+    <div class="download-visual">
+      <img class="download-brand" src="/assets/bennies-logo.png" alt="May's Bennies gold logo">
+      <div class="phone download-phone"><img src="/assets/home-screen.webp" alt="Bennies home screen showing computer, friends and challenge game modes"></div>
+    </div>
+  </section>
+  <section class="shell download-next">
+    <div class="section-label">YOUR NEXT GAME AWAITS</div>
+    <h2>Learn the rules. <em>Make your move.</em></h2>
+    <p>Bennies features a guided tutorial, computer opponents, online games with friends, and 13 rounds of clever card play. The Apple version is available now; the Android version will join it after Google Play approval.</p>
+  </section>
+</main>
+<footer class="site-footer"><div class="shell footer-inner"><div><div class="footer-brand"><img src="../assets/bennies-icon.jpg" alt="" width="36" height="36"><span>Bennies</span></div><p>A little competition. A lot of cards.</p></div><div class="footer-links"><a href="/Download/">Download</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/delete-account.html">Delete account</a><a href="mailto:damianjmcgrath@gmail.com">Contact</a></div><small>© 2026 Bennies Card Game</small></div></footer>
+</body>
+</html>
